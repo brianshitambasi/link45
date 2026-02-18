@@ -8,14 +8,18 @@ const generateToken = (id) => {
 // @desc    Register a new user (admin creation)
 // @route   POST /api/auth/register
 // @access  Public (but you may want to restrict)
+// @desc    Register a new user (always as non‑admin)
+// @route   POST /api/auth/register
+// @access  Public
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, isAdmin } = req.body;
+    const { name, email, password } = req.body;  // <-- no isAdmin from client
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
-    const user = await User.create({ name, email, password, isAdmin });
+    // Force isAdmin to false – only you can later promote yourself in the database
+    const user = await User.create({ name, email, password, isAdmin: false });
     res.status(201).json({
       _id: user._id,
       name: user.name,
