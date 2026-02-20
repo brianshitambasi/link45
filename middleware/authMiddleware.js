@@ -1,29 +1,39 @@
-const jwt = require('jsonwebtoken');
-const { User } = require('../models/model');
+// import the jwt
+const jwt =require('jsonwebtoken')
+const JWT_SECRET=process.env.JWT_SECRET
 
-const protect = async (req, res, next) => {
-  let token;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
-      next();
-    } catch (error) {
-      res.status(401).json({ message: 'Not authorized' });
+const auth=(req,res,next)=>{
+    // extract authorization header
+    const authHeader=req.headers.authorization
+    // get actual token from the header
+    const token= authHeader && authHeader.split(' ')[1]
+
+    // check if we have a token 
+    if (!token) return res.status(404).json({message:"No Token Provided"})
+     try {
+        // verify the token using the secretKey
+        const decode=jwt.verify(token, JWT_SECRET)
+        // we attach the the payload to the request object 
+        // this is the logged in user
+        req.user=decode
+        console.log(decode)
+        // proceed to the next route /function
+        next()
+     } catch (error) {
+        res.status(500).json({message:error.message})
+     }
+}
+
+// middleware to authorize access based on the user role
+// accepts any number number of allowed roles(eg 'admin', 'teacher')
+// ...params -accepts any number of arguments and automatically puts them into an array
+const authorizeRoles=(...allowedRoles)=>{
+    return (req,res,next)=>{
+        if (!req.user || !allowedRoles.includes(req.user.role)){
+            return res.status(403).json({message:"Access denied: Insuffiecient Permissions.."})
+        }
+        next()
     }
-  }
-  if (!token) {
-    res.status(401).json({ message: 'No token' });
-  }
-};
+}
 
-const admin = (req, res, next) => {
-  if (req.user && req.user.isAdmin) {
-    next();
-  } else {
-    res.status(401).json({ message: 'Not authorized as admin' });
-  }
-};
-
-module.exports = { protect, admin };
+module.exports={auth,authorizeRoles}
