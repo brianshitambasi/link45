@@ -6,7 +6,7 @@ const {
   updateLink,
   deleteLink
 } = require('../controllers/linkController');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { auth, admin } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.get('/', getLinks); // public
