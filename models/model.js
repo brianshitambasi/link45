@@ -45,13 +45,24 @@ const linkSchema = new mongoose.Schema({
   active: { type: Boolean, default: true }
 }, { timestamps: true });
 
-// -------------------- User Schema (Admin) --------------------
+// ================= USER SCHEMA =================
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  isAdmin: { type: Boolean, default: false }
+  address: { type: String, required: true },
+  phone: { type: String, required: true },
+  role: {
+    type: String,
+    enum: ["admin"],
+    required: true,
+  },
+  active: { type: Boolean, default: true },
+  profileImage: { type: String },
+  lastLogin: { type: Date },
+  loginCount: { type: Number, default: 0 }
 }, { timestamps: true });
+
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
