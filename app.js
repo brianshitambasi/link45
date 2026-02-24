@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
-const { protect, admin } = require('./middleware/authMiddleware'); // not directly used here, but available
+const { protect, admin } = require('./middleware/auth'); // not directly used here, but available
 
 // Load environment variables
 dotenv.config();
