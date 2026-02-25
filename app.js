@@ -3,9 +3,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
-const { protect, admin } = require('./middleware/auth'); // not directly used here, but available
 
-// Load environment variables
+// Load env vars
 dotenv.config();
 
 // Connect to MongoDB
@@ -13,25 +12,33 @@ connectDB();
 
 const app = express();
 
-// Body parsers
+// Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors());
 
-// Serve uploaded files statically
-// Ensure an 'uploads' folder exists in the project root, or create it programmatically
-const uploadsDir = path.join(__dirname, 'uploads');
-app.use('/uploads', express.static(uploadsDir));
+// Static folder for uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/categories', require('./routes/categoryRoutes'));
-app.use('/api/products', require('./routes/productRoutes'));
-app.use('/api/forms', require('./routes/formRoutes'));
-app.use('/api/links', require('./routes/linkRoutes'));
-app.use('/api/orders', require('./routes/orderRoutes'));
+// Import routes
+const authRoutes = require('./routes/authRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const productRoutes = require('./routes/productRoutes');
+const formRoutes = require('./routes/formRoutes');
+const linkRoutes = require('./routes/linkRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const announcementRoutes = require('./routes/announcementRoutes');
+
+// Mount routes
+app.use('/api/auth', authRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/forms', formRoutes);
+app.use('/api/links', linkRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/announcements', announcementRoutes);
 
 // Base route
 app.get('/', (req, res) => {
@@ -43,7 +50,7 @@ app.use((req, res, next) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Global error handler
+// Error handler
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode).json({
@@ -52,7 +59,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Handle unhandled promise rejections (e.g., database connection issues)
+// Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
   console.error('UNHANDLED REJECTION! 💥 Shutting down...');
   console.error(err.name, err.message);
@@ -61,7 +68,7 @@ process.on('unhandledRejection', (err) => {
   });
 });
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`✅ Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
