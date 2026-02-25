@@ -5,14 +5,16 @@ const {
   getOrderById,
   updateOrderStatus
 } = require('../controllers/orderController');
-const { auth, admin } = require('../middleware/auth');
+
+const { auth, authorizeRoles } = require('../middleware/auth');
+
 const router = express.Router();
 
 router.route('/')
-  .post(createOrder) // public (or protect if you want only logged-in users)
-  .get(protect, admin, getOrders);
+  .post(createOrder) // make auth required if needed
+  .get(auth, authorizeRoles('admin'), getOrders);
 
-router.get('/:id', protect, admin, getOrderById);
-router.put('/:id/status', protect, admin, updateOrderStatus);
+router.get('/:id', auth, authorizeRoles('admin'), getOrderById);
+router.put('/:id/status', auth, authorizeRoles('admin'), updateOrderStatus);
 
 module.exports = router;

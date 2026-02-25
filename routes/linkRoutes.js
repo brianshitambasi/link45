@@ -6,16 +6,20 @@ const {
   updateLink,
   deleteLink
 } = require('../controllers/linkController');
-const { auth, admin } = require('../middleware/auth');
+
+const { auth, authorizeRoles } = require('../middleware/auth');
+
 const router = express.Router();
 
 router.get('/', getLinks); // public
-router.get('/all', protect, admin, getAllLinks);
+
+router.get('/all', auth, authorizeRoles('admin'), getAllLinks);
+
 router.route('/')
-  .post(protect, admin, createLink);
+  .post(auth, authorizeRoles('admin'), createLink);
 
 router.route('/:id')
-  .put(protect, admin, updateLink)
-  .delete(protect, admin, deleteLink);
+  .put(auth, authorizeRoles('admin'), updateLink)
+  .delete(auth, authorizeRoles('admin'), deleteLink);
 
 module.exports = router;
