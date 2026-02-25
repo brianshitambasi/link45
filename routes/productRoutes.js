@@ -6,17 +6,23 @@ const {
   updateProduct,
   deleteProduct
 } = require('../controllers/productController');
-const { protect, admin } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware'); // multer with memory storage
+
+const { auth, authorizeRoles } = require('../middleware/auth');
+const upload = require('../middleware/uploadMiddleware');
+
 const router = express.Router();
 
+// Public routes
 router.route('/')
-  .get(getProducts)
-  .post(protect, admin, upload.single('image'), createProduct);
+  .get(getProducts);
+
+// Admin protected routes
+router.route('/')
+  .post(auth, authorizeRoles('admin'), upload.single('image'), createProduct);
 
 router.route('/:id')
   .get(getProductById)
-  .put(protect, admin, upload.single('image'), updateProduct)
-  .delete(protect, admin, deleteProduct);
+  .put(auth, authorizeRoles('admin'), upload.single('image'), updateProduct)
+  .delete(auth, authorizeRoles('admin'), deleteProduct);
 
 module.exports = router;
