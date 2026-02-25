@@ -40,6 +40,23 @@ app.use('/api/links', linkRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/announcements', announcementRoutes);
 
+// ========== TEMPORARY TEST ROUTE – REMOVE AFTER TESTING ==========
+app.get('/test-email', async (req, res) => {
+  try {
+    const sendEmail = require('./utils/email');
+    await sendEmail({
+      to: process.env.ADMIN_EMAIL,
+      subject: 'Test from Render',
+      html: '<p>If you see this, email works!</p>'
+    });
+    res.send('Email sent ✅');
+  } catch (err) {
+    console.error('Test email error:', err);
+    res.status(500).send(err.message);
+  }
+});
+// ===================================================================
+
 // Base route
 app.get('/', (req, res) => {
   res.send('Stallions Mentor API is running...');
