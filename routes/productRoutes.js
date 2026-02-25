@@ -6,7 +6,7 @@ const {
   updateProduct,
   deleteProduct
 } = require('../controllers/productController');
-const { auth, admin } = require('../middleware/authMiddleware');
+const { auth, admin } = require('../middleware/auth');
 const router = express.Router();
 
 router.route('/')
