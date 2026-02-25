@@ -27,11 +27,11 @@ app.use('/uploads', express.static(uploadsDir));
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
-// app.use('/api/categories', require('./routes/categoryRoutes'));
-// app.use('/api/products', require('./routes/productRoutes'));
-// app.use('/api/forms', require('./routes/formRoutes'));
-// app.use('/api/links', require('./routes/linkRoutes'));
-// app.use('/api/orders', require('./routes/orderRoutes'));
+app.use('/api/categories', require('./routes/categoryRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/forms', require('./routes/formRoutes'));
+app.use('/api/links', require('./routes/linkRoutes'));
+app.use('/api/orders', require('./routes/orderRoutes'));
 
 // Base route
 app.get('/', (req, res) => {
