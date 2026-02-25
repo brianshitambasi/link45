@@ -12,6 +12,7 @@ const sendWhatsApp = async (to, body) => {
     console.log('WhatsApp sent:', message.sid);
   } catch (error) {
     console.error('WhatsApp error:', error);
+    throw error; // rethrow to be caught in controller
   }
 };
 
